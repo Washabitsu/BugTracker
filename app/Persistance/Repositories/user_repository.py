@@ -56,3 +56,14 @@ class UserRepository:
         except Exception as exception:
             logger.error(
                 f"[SQLAlchemy Exception Occured] : while retrieving users | {exception}")
+            
+            
+    async def create(self, user: User):
+        try:
+            return self.session.add(user)
+        except sqlalchemy.exc.SQLAlchemyError as exception: 
+            logger.error(
+                f"[SQLAlchemy Exception Occured] : While creating user | {exception}")
+        except Exception as exception:
+            logger.error(
+                f"[SQLAlchemy Exception Occured] : While creating user | {exception}")

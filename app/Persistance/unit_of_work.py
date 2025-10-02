@@ -1,13 +1,13 @@
 from app.Persistance.Repositories.user_repository import UserRepository
 from app.Persistance.Repositories.project_repository import ProjectRepository
-from app.Persistance.Repositories.bug_repository import BugRepository
+from app.Persistance.Repositories.issue_repository import IssueRepository
 from sqlalchemy.ext.asyncio import AsyncSession
 class UnitOfWork:
     def __init__(self, session: AsyncSession):
         self.session = session
         self.user_repository = UserRepository(session)
         self.project_repository = ProjectRepository(session)
-        self.bug_repository = BugRepository(session)
+        self.issue_repository = IssueRepository(session)
         self.new_objects = []
         self.dirty_objects = []
         self.deleted_objects = []
