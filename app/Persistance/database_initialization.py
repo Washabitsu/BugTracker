@@ -7,6 +7,8 @@ from app.Persistance.database import create_database_engine, get_database_connec
 from sqlalchemy.sql.expression import text
 from pymongo import MongoClient
 import logging
+import subprocess
+import sys
 
 
 logger = logging.getLogger(__name__)
@@ -37,6 +39,18 @@ def create_database():
             engine.dispose()
             
 
+def run_alembic_migrations():
+    """Run Alembic migrations programmatically"""
+    try:
+        result = subprocess.run([
+            sys.executable, "-m", "alembic", "upgrade", "head"
+        ], capture_output=True, text=True, check=True)
+        logger.info(f"Alembic upgrade successful: {result.stdout}")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Alembic upgrade failed: {e.stderr}")
+        raise
+
+
 def initialize_database():
     try:
         create_database()
@@ -45,12 +59,34 @@ def initialize_database():
 
         # Create the needed functions and sequences for the snowflake ids.
         if create_snowflake_id_generator(engine=engine):
-
+            # Import models to ensure they're registered with Base.metadata
             # noqa (No Quality Assurance) for the linter, specific for rule F401.
             from app.Core.Domain import base  # noqa: F401
         
-            # Create all the ORM models, if any is missing.
-            Base.metadata.create_all(engine)
+            # Check if we should auto-run migrations (development only)
+            auto_migrate = get_enviromental_variable("AUTO_MIGRATE_DB") == "true"
+            
+            if auto_migrate:
+                logger.info("AUTO_MIGRATE_DB=true, running Alembic migrations...")
+                try:
+                    run_alembic_migrations()
+                except Exception as migration_error:
+                    logger.error(f"Failed to run migrations: {migration_error}")
+            else:
+                # Check if alembic_version table exists to verify Alembic is set up
+                with engine.connect() as connection:
+                    alembic_table_exists = connection.execute(text("""
+                        SELECT EXISTS (
+                            SELECT FROM information_schema.tables 
+                            WHERE table_schema = 'public' 
+                            AND table_name = 'alembic_version'
+                        );
+                    """)).scalar()
+                    
+                    if not alembic_table_exists:
+                        logger.warning(
+                            "Alembic not initialized! Please run: poetry run alembic upgrade head"
+                        )
     except exc.SQLAlchemyError as sqlalchemy_exception:
         logger.error(
             f"[Initialize Database SQLAlchemyError]: {sqlalchemy_exception._message()}"
