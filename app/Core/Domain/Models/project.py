@@ -18,7 +18,7 @@ class Project(Base):
     end_date = Column(Date,nullable=False)
     
     users = relationship("User", secondary=project_user_association_table, back_populates='projects')
-    bugs = relationship("Bug",foreign_keys="Bug.project_id",back_populates="project")
+    issues = relationship("Issue",foreign_keys="Issue.project_id",back_populates="project")
     
     async def update(self,project,users):
         self.name = project.name if project.name else self.name

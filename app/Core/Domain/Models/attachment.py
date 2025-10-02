@@ -18,4 +18,4 @@ class Attachment(Base):
     mongodb_id = Column(BYTEA(12),nullable=False)
     
     comment_id = Column(BIGINT,ForeignKey('Comment.id'))
-    bug_id = Column(BIGINT,ForeignKey('Bug.id'))
+    issue_id = Column(BIGINT,ForeignKey('Issue.id'))

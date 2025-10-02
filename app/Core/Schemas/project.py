@@ -2,7 +2,7 @@ from typing import List, Optional
 from pydantic import BaseModel, validator
 from datetime import date
 from app.Core.Schemas.user import UserOut
-from app.Core.Schemas.bug import Bug
+from app.Core.Schemas.issue import Issue
 
 
 class ProjectBase(BaseModel):
@@ -21,9 +21,9 @@ class ProjectUpdate(ProjectBase):
 
 
 class Project(ProjectBase):
-    id: Optional[int] = None
+    id: Optional[str] = None
     users: Optional[List[UserOut]] = []
-    bugs: Optional[List[Bug]] = []
+    issues: Optional[List[Issue]] = []
 
     @validator('id', pre=True)
     def id_to_str(cls, v):

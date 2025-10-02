@@ -1,6 +1,6 @@
 from typing import List, Optional
 from pydantic import BaseModel, validator
-from app.Core.Schemas.bug import Bug
+from app.Core.Schemas.issue import Issue
 
 
 class UserBase(BaseModel):
@@ -29,8 +29,8 @@ class UserOut(UserBase):
 
 class User(UserBase):
     id: int
-    bugs_reported: List[Bug] = []
-    bugs_assigned: List[Bug] = []
+    issues_reported: List[Issue] = []
+    issues_assigned: List[Issue] = []
 
     @validator('id', pre=True)
     def id_to_str(cls, v):

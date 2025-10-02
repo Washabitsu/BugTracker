@@ -17,6 +17,6 @@ class Comment(Base):
     date_created = Column(DateTime,nullable=False)  
     
     user_id = Column(BIGINT,ForeignKey('User.id'))
-    bug_id = Column(BIGINT,ForeignKey('Bug.id'))
+    issue_id = Column(BIGINT,ForeignKey('Issue.id'))
     
     attachments = relationship("Attachment",backref="Comment")
