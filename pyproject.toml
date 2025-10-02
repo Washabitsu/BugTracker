@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "Bug Tracker"
+name = "Bug_Tracker"
 version = "0.1.0"
-description = "Bug tracking system for the whole mitchoulious system :)."
+description = "Bug tracking system for the whole eco system."
 authors = ["Dimitris Argyropoulos <dimitris.argyropoulos@outlook.com>"]
 readme = "README.md"
 
@@ -21,6 +21,9 @@ beautifulsoup4 = "^4.11.2"
 asyncio = "^3.4.3"
 pymongo = "^4.3.3"
 pyjwt = "^2.6.0"
+alembic = "^1.16.5"
+redis = "^6.4.0"
+py-linq = "^1.4.0"
 
 
 [tool.poetry.group.dev.dependencies]
